@@ -32,8 +32,6 @@ void accumulatedDistribution_word(int *words, int *words_range) {
   }
 }
 
-
-
 /**
  * Given a filename and a pointer to two array, this method will count the frequence of
  * occurences for each word in the file, and update the corresponding position in the
@@ -50,66 +48,69 @@ void frequencyOfWord(char *filename,char words[ARRAY_LEN][50],int frequency[ARRA
     ssize_t read;
     wordCount = 0;
     int uniqueWordCount = 0;
-
-
     FILE *file = fopen (filename, "r");
     if (file == NULL) {
       perror("fopen");
     }
 
+
+
     int wordsIndex = 0;
     while( (read = getline(&line, &len, file)) != -1 ) {
       if (read > 0) {
-	int offset = 0;
+	       int offset = 0;
 
-	while (line[offset] != '\0') {
-	  //printf("line: %ld\n", strlen(line));
-	  char word[100];
-	  memset(word, 0, sizeof(word));
-	  for (int i = 0; i < strlen(line); i++) {
-	    char currChar = tolower(line[offset]);
-	    //printf("%c\n", currChar);
-	    if (('a' <= currChar && currChar <= 'z') || currChar == '\''
-		|| '0' <= currChar && currChar <= '9') {
-	      word[i] = currChar;
-	      offset++;
-	    }
-	    else {
-	      offset++;
-	      break;
-	    } // else
-	  } // for
-	  if (word[0] != '\0'){
-	    //printf("%s\n", word);
-	    wordCount++;
+	       while (line[offset] != '\0') {
+	           //printf("line: %ld\n", strlen(line));
+	           char word[100];
+	           memset(word, 0, sizeof(word));
+
+	           for (int i = 0; i < strlen(line); i++) {
+               char currChar = tolower(line[offset]);
+	             //printf("%c\n", currChar);
+	             if (('a' <= currChar && currChar <= 'z') || currChar == '\''
+		             || '0' <= currChar && currChar <= '9') {
+                   word[i] = currChar;
+	                 offset++;
+               }
+               else {
+	                offset++;
+	                break;
+	             } // else
+	           } // for
+
+	           if (word[0] != '\0'){
+	              //printf("%s\n", word);
+	              wordCount++;
+
+	              // store word and calculate frequency
+	              for (int i = 0; i < ARRAY_LEN; i++) {
+	                 // did not find match so add new word
+	                 if (strcmp(words[i], "\0") == 0) {
+		                   //printf("no match\n");
+		                   strcpy(words[i], word);
+		                   frequency[i]++;
+		                   uniqueWordCount++;
+		                   break;
+	                 }
+	                 // did we find match?
+	                 else if (strcmp(words[i], word) == 0) {
+		                   //printf("match\n");
+		                   frequency[i]++;
+		                   break;
+	                 }
+	                 else {
+		                   //printf("hi\n");
+		                   continue;
+	                 }
+	              } // for
+	           } // if
+	           //printf("offset: %d\n", offset);
+	        } // while
+        } // if
+      } // while
 
 
-	    // store word and calculate frequency
-	    for (int i = 0; i < ARRAY_LEN; i++) {
-	      // did not find match so add new word
-	      if (strcmp(words[i], "\0") == 0) {
-		//printf("no match\n");
-		strcpy(words[i], word);
-		frequency[i]++;
-		uniqueWordCount++;
-		break;
-	      }
-	      // did we find match?
-	      else if (strcmp(words[i], word) == 0) {
-		//printf("match\n");
-		frequency[i]++;
-		break;
-	      }
-	      else {
-		//printf("hi\n");
-		continue;
-	      }
-	    } // for
-	  } // if
-	  //printf("offset: %d\n", offset);
-	} // while
-      } // if
-    } // while
     printf("%d\n", wordCount);
     printf("%d\n", uniqueWordCount);
 
@@ -229,7 +230,7 @@ int main( int argc, char** argv ) {
 
   memset(randomChars, 0, sizeof(randomChars));
   generateRandChars(randomChars, letters_range, letterSum);
-  //printChars_sized(randomChars); // it would print out the characters base on users input
+
   //printChars(randomChars);
   //toTextFile(randomChars);
 
@@ -251,6 +252,11 @@ int main( int argc, char** argv ) {
 
   printf("random generated letters histogram\n");
   drawHistogram(compLetters, 100);
+
+  printChars_sized(randomChars); // it would print out the characters base on users input
+  
+
+
 
   // creates and then create an array of words and an array of frequency
   char words[ARRAY_LEN][50];
@@ -277,7 +283,7 @@ int main( int argc, char** argv ) {
   printf(" ");
   if(num % 10 == 0 && num != 0) printf("\n");
 }
-  //printf("\n");
+  printf("\n");
 
 
 
